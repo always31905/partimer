@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 제목 -->
+        <EditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="제목을 입력하세요"
+            android:inputType="text" />
+
+        <!-- 내용 -->
+        <EditText
+            android:id="@+id/etContent"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="8dp"
+            android:gravity="top"
+            android:hint="내용을 입력하세요"
+            android:inputType="textMultiLine"
+            android:background="@android:drawable/editbox_background_normal"/>
+
+        <!-- 구 선택 -->
+        <TextView
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="근무 구(區) 선택"/>
+        <Spinner
+            android:id="@+id/spGuWrite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/daegu_gu"/>
+
+        <!-- 날짜 선택 (달력) -->
+        <TextView
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="근무 날짜 선택"/>
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:background="@android:drawable/editbox_background_normal"
+            android:text="날짜를 선택하세요"
+            android:textColorHint="#888"/>
+
+        <!-- 시간 입력: 시작시간 ~ 종료시간 -->
+        <TextView
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="근무 시간" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginTop="4dp">
+
+            <EditText
+                android:id="@+id/etStartTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="시작 (HH:MM)"
+                android:inputType="time" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="~" />
+
+            <EditText
+                android:id="@+id/etEndTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="종료 (HH:MM)"
+                android:inputType="time" />
+        </LinearLayout>
+
+        <!-- 시급 -->
+        <EditText
+            android:id="@+id/etPay"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="시급 (숫자)"
+            android:inputType="number"/>
+
+        <!-- 키워드 -->
+        <EditText
+            android:id="@+id/etKeyword"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="키워드 (쉼표로 구분)"/>
+
+        <!-- 등록 버튼 -->
+        <Button
+            android:id="@+id/btnPost"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="등록하기"/>
+    </LinearLayout>
+</ScrollView>

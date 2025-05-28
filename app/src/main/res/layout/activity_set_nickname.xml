@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center_vertical">
+
+    <!-- 제목 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="닉네임 설정"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:gravity="start"
+        android:layout_marginBottom="8dp" />
+
+    <!-- 서브텍스트 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="  username"
+        android:textSize="12sp"
+        android:textColor="#9E9E9E"
+        android:gravity="start"
+        android:layout_marginBottom="4dp" />
+
+    <!-- 입력창 -->
+    <EditText
+        android:id="@+id/etNickname"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="닉네임을 입력하세요"
+        android:inputType="text"
+
+        android:layout_marginBottom="20dp"
+        android:minHeight="48dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"/>
+
+    <!-- 확인 버튼 -->
+    <Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#9370DB"
+        android:textColor="@android:color/white"
+        android:text="OK" />
+
+</LinearLayout>

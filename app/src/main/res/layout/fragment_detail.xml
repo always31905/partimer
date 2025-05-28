@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/scrollViewDetail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- 제목 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="제목"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="(제목이 여기에 표시됩니다)"
+                android:background="@android:drawable/editbox_background_normal"
+                android:padding="8dp"/>
+
+            <!-- 내용 -->
+            <TextView
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="내용"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:id="@+id/tvContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="(내용이 여기에 표시됩니다)"
+                android:background="@android:drawable/editbox_background_normal"
+                android:padding="8dp"
+                android:minHeight="150dp"
+                android:gravity="top"/>
+
+            <!-- 구(區) -->
+            <TextView
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="근무 구(區)"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:id="@+id/tvLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="(구 이름)"
+                android:background="@android:drawable/editbox_background_normal"
+                android:padding="8dp"/>
+
+            <!-- 날짜 -->
+            <TextView
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="근무 날짜"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="(YYYY-MM-DD)"
+                android:background="@android:drawable/editbox_background_normal"
+                android:padding="8dp"/>
+
+            <!-- 시간 -->
+            <TextView
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="근무 시간"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="(HH:MM ~ HH:MM)"
+                android:background="@android:drawable/editbox_background_normal"
+                android:padding="8dp"/>
+
+            <!-- 시급 -->
+            <TextView
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="시급"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:id="@+id/tvPay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="(숫자)원/시간"
+                android:background="@android:drawable/editbox_background_normal"
+                android:padding="8dp"/>
+
+            <!-- 키워드 -->
+            <TextView
+                android:layout_marginTop="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="키워드"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+            <TextView
+                android:id="@+id/tvKeywords"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="(키워드1, 키워드2, ...)"
+                android:background="@android:drawable/editbox_background_normal"
+                android:padding="8dp"/>
+
+            <!-- 댓글 섹션 -->
+            <TextView
+                android:layout_marginTop="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="댓글"
+                android:textStyle="bold"
+                android:textSize="18sp"/>
+
+            <!-- 댓글 입력 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/etComment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="댓글을 입력하세요"
+                    android:maxLines="3"/>
+
+                <Button
+                    android:id="@+id/btnPostComment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="등록"/>
+
+            </LinearLayout>
+
+            <!-- 댓글 목록 -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvComments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</FrameLayout>
