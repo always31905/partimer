@@ -11,6 +11,7 @@ public class JobPost {
     private String id;
 
     private String writerUid;
+    private String writerName;
     private String title;
     private String content;
     private String location;
@@ -29,6 +30,7 @@ public class JobPost {
     // === Getter ===
     public String getId() { return id; }
     public String getWriterUid() { return writerUid; }
+    public String getWriterName() { return writerName; }
     public String getTitle() { return title; }
     public String getContent() { return content; }
     public String getLocation() { return location; }
@@ -42,6 +44,7 @@ public class JobPost {
 
     // === Setter ===
     public void setWriterUid(String writerUid) { this.writerUid = writerUid; }
+    public void setWriterName(String writerName) { this.writerName = writerName; }
     public void setTitle(String title) { this.title = title; }
     public void setContent(String content) { this.content = content; }
     public void setLocation(String location) { this.location = location; }

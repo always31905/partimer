@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,7 +20,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class SearchFragment extends Fragment {
@@ -107,59 +113,45 @@ public class SearchFragment extends Fragment {
     // 검색 조건으로 Firestore에서 글 목록 불러오기
     private void searchPosts(String gu, String date, Integer minPay, List<String> keywords) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Query query = db.collection("job_posts");
+        Query query = db.collection("job_posts")
+                .orderBy("location")
+                .orderBy("date")
+                .orderBy("pay")
+                .orderBy("createdAt", Query.Direction.DESCENDING);
 
-        // 1) 구 필터 & 정렬 (전체 선택 시 gu == null이므로 스킵)
-        if (gu != null) {
-            query = query
-                    .whereEqualTo("location", gu)
-                    .orderBy("location");
-        }
-
-        // 2) 날짜 필터 (정렬에는 영향 없음)
-        if (date != null) {
+        if (gu != null)
+            query = query.whereEqualTo("location", gu);
+        if (date != null)
             query = query.whereEqualTo("date", date);
-        }
+        if (minPay != null)
+            query = query.whereGreaterThanOrEqualTo("pay", minPay);
 
-        // 3) 시급 범위 필터 & 정렬
-        if (minPay != null) {
-            query = query
-                    .whereGreaterThanOrEqualTo("pay", minPay)
-                    .orderBy("pay");           // 범위 필터 필드 먼저
-        }
+        query.get().addOnSuccessListener(snapshot -> {
+            List<JobPost> result = new ArrayList<>();
+            for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                JobPost post = doc.toObject(JobPost.class);
+                if (post != null) {
+                    post.setId(doc.getId());
 
-        // 4) 기본 정렬: 최신 순
-        query = query.orderBy("createdAt", Query.Direction.DESCENDING);
-
-        // 5) 쿼리 실행
-        query.get()
-                .addOnSuccessListener(snapshot -> {
-                    List<JobPost> result = new ArrayList<>();
-                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
-                        JobPost post = doc.toObject(JobPost.class);
-                        if (post != null) {
-                            post.setId(doc.getId());
-
-                            // 키워드 매칭
-                            boolean match = true;
-                            if (keywords != null && !keywords.isEmpty()) {
-                                match = false;
-                                for (String input : keywords) {
-                                    if (post.getKeywords() != null &&
-                                            post.getKeywords().contains(input)) {
-                                        match = true;
-                                        break;
-                                    }
-                                }
+                    boolean match = true;
+                    if (keywords != null && !keywords.isEmpty()) {
+                        match = false;
+                        for (String input : keywords) {
+                            if (post.getKeywords() != null &&
+                                    post.getKeywords().contains(input)) {
+                                match = true;
+                                break;
                             }
-
-                            if (match) result.add(post);
                         }
                     }
-                    adapter.setItems(result);
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "검색 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+
+                    if (match) result.add(post);
+                }
+            }
+
+            adapter.setItems(result);
+        }).addOnFailureListener(e ->
+                Toast.makeText(getContext(), "검색 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+        );
     }
 }

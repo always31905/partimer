@@ -1,15 +1,18 @@
 package com.example.haedal_project;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ProgressBar;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -17,19 +20,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DetailFragment extends Fragment {
     private TextView tvTitle, tvDate, tvTime, tvLocation, tvPay, tvContent, tvKeywords;
     private ProgressBar progressBar;
     private EditText etComment;
-    private Button btnPostComment;
+    private Button btnPostComment, btnChat;
     private RecyclerView rvComments;
     private CommentAdapter commentAdapter;
     private String postId;
+    private JobPost currentPost;
 
     @Nullable
     @Override
@@ -46,7 +55,7 @@ public class DetailFragment extends Fragment {
         tvPay      = v.findViewById(R.id.tvPay);
         tvContent  = v.findViewById(R.id.tvContent);
         tvKeywords = v.findViewById(R.id.tvKeywords);
-        // progressBar = v.findViewById(R.id.progressBar);->로딩중바
+        btnChat    = v.findViewById(R.id.btnChat);
         
         // 댓글 관련 View 초기화
         etComment = v.findViewById(R.id.etComment);
@@ -62,7 +71,6 @@ public class DetailFragment extends Fragment {
         if (getArguments() != null) {
             postId = getArguments().getString("postId");
             if (postId != null && !postId.isEmpty()) {
-
                 fetchPostDetail(postId);
                 loadComments();
                 
@@ -73,6 +81,9 @@ public class DetailFragment extends Fragment {
                         postComment(commentText);
                     }
                 });
+
+                // 채팅 버튼 클릭 리스너
+                btnChat.setOnClickListener(v1 -> startChat());
             } else {
                 showError("게시글 ID가 유효하지 않습니다.");
             }
@@ -81,6 +92,146 @@ public class DetailFragment extends Fragment {
         }
 
         return v;
+    }
+
+    private void startChat() {
+        if (currentPost == null) {
+            showError("게시글 정보를 불러올 수 없습니다.");
+            return;
+        }
+
+        // Firebase 인증 확인
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) {
+            showError("로그인이 필요합니다.");
+            return;
+        }
+
+        String currentUserId = auth.getCurrentUser().getUid();
+        String authorId = currentPost.getWriterUid();
+        String authorName = currentPost.getWriterName();
+        
+        Log.d("DetailFragment", "Starting chat - Current User: " + currentUserId);
+        Log.d("DetailFragment", "Starting chat - Author ID: " + authorId);
+        Log.d("DetailFragment", "Starting chat - Author Name: " + authorName);
+        
+        // 작성자 ID가 없는 경우
+        if (authorId == null || authorId.isEmpty()) {
+            showError("채팅을 시작할 수 없습니다: 작성자 정보가 없습니다.");
+            return;
+        }
+
+        // 작성자 이름이 없는 경우 "Unknown"으로 표시
+        if (authorName == null || authorName.isEmpty()) {
+            authorName = "Unknown";
+        }
+
+        // 자신과는 채팅할 수 없음
+        if (currentUserId.equals(authorId)) {
+            showError("자신과는 채팅할 수 없습니다.");
+            return;
+        }
+
+        // 채팅방 ID 생성 (작은 ID가 앞으로 오도록 하여 일관성 유지)
+        String chatRoomId = currentUserId.compareTo(authorId) < 0 
+            ? currentUserId + "_" + authorId 
+            : authorId + "_" + currentUserId;
+
+        Log.d("DetailFragment", "Created chat room ID: " + chatRoomId);
+
+        final String finalAuthorName = authorName;
+
+        // Firebase 데이터베이스 초기화 및 연결
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference roomRef = database.getReference()
+            .child("chat_rooms").child(chatRoomId);
+
+        // 현재 사용자의 이름 가져오기
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(currentUserId)
+            .get()
+            .addOnSuccessListener(documentSnapshot -> {
+                String currentUserName = "Unknown";
+                if (documentSnapshot.exists()) {
+                    currentUserName = documentSnapshot.getString("nickname");
+                    if (currentUserName == null || currentUserName.isEmpty()) {
+                        currentUserName = documentSnapshot.getString("name");
+                    }
+                }
+                
+                if (currentUserName == null || currentUserName.isEmpty()) {
+                    currentUserName = auth.getCurrentUser().getDisplayName();
+                    if (currentUserName == null || currentUserName.isEmpty()) {
+                        currentUserName = "Unknown";
+                    }
+                }
+
+                final String finalCurrentUserName = currentUserName;
+
+                // 채팅방 존재 여부 확인
+                roomRef.get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("DetailFragment", "Successfully checked chat room existence");
+                        DataSnapshot snapshot = task.getResult();
+                        if (!snapshot.exists()) {
+                            Log.d("DetailFragment", "Creating new chat room");
+                            
+                            // ChatRoom 객체 생성
+                            Map<String, Object> chatRoomData = new HashMap<>();
+                            chatRoomData.put("roomId", chatRoomId);
+                            chatRoomData.put("user1Id", currentUserId);
+                            chatRoomData.put("user2Id", authorId);
+                            chatRoomData.put("user1Name", finalCurrentUserName);
+                            chatRoomData.put("user2Name", finalAuthorName);
+                            chatRoomData.put("lastMessage", "");
+                            chatRoomData.put("lastMessageTime", System.currentTimeMillis());
+                            chatRoomData.put("createdAt", System.currentTimeMillis());
+
+                            // unreadCount 초기화
+                            Map<String, Integer> unreadCount = new HashMap<>();
+                            unreadCount.put(currentUserId, 0);
+                            unreadCount.put(authorId, 0);
+                            chatRoomData.put("unreadCount", unreadCount);
+
+                            // 채팅방 데이터 저장
+                            roomRef.setValue(chatRoomData)
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d("DetailFragment", "Chat room created successfully");
+                                    startChatActivity(chatRoomId, authorId, finalAuthorName);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("DetailFragment", "Error creating chat room", e);
+                                    showError("채팅방을 생성하는 중 오류가 발생했습니다: " + e.getMessage());
+                                });
+                        } else {
+                            Log.d("DetailFragment", "Chat room already exists");
+                            startChatActivity(chatRoomId, authorId, finalAuthorName);
+                        }
+                    } else {
+                        Log.e("DetailFragment", "Error checking chat room", task.getException());
+                        showError("채팅방 확인 중 오류가 발생했습니다: " + task.getException().getMessage());
+                    }
+                });
+            })
+            .addOnFailureListener(e -> {
+                Log.e("DetailFragment", "Error getting current user info", e);
+                showError("사용자 정보를 가져오는 중 오류가 발생했습니다: " + e.getMessage());
+            });
+    }
+
+    private void startChatActivity(String chatRoomId, String otherUserId, String otherUserName) {
+        try {
+            Intent intent = new Intent(getActivity(), ChatRoomActivity.class);
+            intent.putExtra("chatRoomId", chatRoomId);
+            intent.putExtra("otherUserId", otherUserId);
+            intent.putExtra("otherUserName", otherUserName);
+            Log.d("DetailFragment", "Starting ChatRoomActivity with intent extras");
+            startActivity(intent);
+        } catch (Exception e) {
+            Log.e("DetailFragment", "Error starting ChatRoomActivity", e);
+            showError("채팅방을 열 수 없습니다: " + e.getMessage());
+        }
     }
 
     private void loadComments() {
@@ -122,6 +273,21 @@ public class DetailFragment extends Fragment {
                             Toast.LENGTH_SHORT).show());
     }
 
+    private void showPostDetails() {
+        if (currentPost != null) {
+            tvTitle.setText(currentPost.getTitle());
+            tvDate.setText(currentPost.getDate());
+            tvTime.setText(currentPost.getStartTime() + " ~ " + currentPost.getEndTime());
+            tvLocation.setText(currentPost.getLocation());
+            tvPay.setText(currentPost.getPay() + "원/시간");
+            tvContent.setText(currentPost.getContent());
+            if (currentPost.getKeywords() != null) {
+                tvKeywords.setText(TextUtils.join(", ", currentPost.getKeywords()));
+            } else {
+                tvKeywords.setText("(키워드 없음)");
+            }
+        }
+    }
 
     private void showError(String message) {
         if (getContext() != null) {
@@ -131,30 +297,24 @@ public class DetailFragment extends Fragment {
             }
         }
     }
-    /**
-     * Firestore에서 단일 문서를 조회하여 UI에 표시
-     */
+
     private void fetchPostDetail(String postId) {
         FirebaseFirestore.getInstance()
                 .collection("job_posts")
                 .document(postId)
                 .get()
                 .addOnSuccessListener(doc -> {
-
                     if (doc.exists()) {
-                        JobPost post = doc.toObject(JobPost.class);
-                        if (post != null) {
-                            tvTitle.setText(post.getTitle());
-                            tvDate.setText(post.getDate());
-                            tvTime.setText(post.getStartTime() + " ~ " + post.getEndTime());
-                            tvLocation.setText(post.getLocation());
-                            tvPay.setText(post.getPay() + "원/시간");
-                            tvContent.setText(post.getContent());
-                            if (post.getKeywords() != null) {
-                                tvKeywords.setText(TextUtils.join(", ", post.getKeywords()));
-                            } else {
-                                tvKeywords.setText("(키워드 없음)");
-                            }
+                        currentPost = doc.toObject(JobPost.class);
+                        if (currentPost != null) {
+                            currentPost.setId(doc.getId());
+                            showPostDetails();
+                            
+                            // 채팅 버튼 표시 여부 설정
+                            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            String postWriterId = currentPost.getWriterUid();
+                            boolean isAuthor = postWriterId != null && postWriterId.equals(currentUserId);
+                            btnChat.setVisibility(isAuthor ? View.GONE : View.VISIBLE);
                         } else {
                             showError("게시글 데이터를 불러올 수 없습니다.");
                         }
@@ -163,7 +323,6 @@ public class DetailFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e -> {
-
                     showError("게시글을 불러오는데 실패했습니다: " + e.getMessage());
                 });
     }
