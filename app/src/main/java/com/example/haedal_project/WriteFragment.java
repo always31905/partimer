@@ -5,12 +5,26 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import androidx.annotation.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.*;
-import java.util.*;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class WriteFragment extends Fragment {
@@ -83,8 +97,11 @@ public class WriteFragment extends Fragment {
             }
 
             Map<String,Object> post = new HashMap<>();
-            post.put("writerUid",
-                    FirebaseAuth.getInstance().getCurrentUser().getUid());
+            String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            String currentName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+            
+            post.put("writerUid", currentUid);
+            post.put("writerName", currentName);
             post.put("title",    title);
             post.put("content",  content);
             post.put("location", gu);
