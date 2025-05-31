@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">HAEDAL_PROJECT</string>
+    <string name="default_web_client_id">258639347441-rm9ijv016i9spjlaecpigqbbrteg50pg.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">258639347441</string>
+    <string name="google_api_key" translatable="false">AIzaSyDL5qkMggjVhtlwroBZIDjsCh4w3O7uXJc</string>
+    <string name="google_app_id" translatable="false">1:258639347441:android:9349ad8873280e962e3350</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDL5qkMggjVhtlwroBZIDjsCh4w3O7uXJc</string>
+    <string name="google_storage_bucket" translatable="false">haekathon.firebasestorage.app</string>
+    <string name="project_id" translatable="false">haekathon</string>
+</resources>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 1) 구 Spinner 데이터 -->
+    <string-array name="daegu_gu">
+        <item>전체</item>
+        <item>중구</item>
+        <item>동구</item>
+        <item>서구</item>
+        <item>남구</item>
+        <item>북구</item>
+        <item>수성구</item>
+        <item>달서구</item>
+        <item>달성군</item>
+    </string-array>
+
+    <!-- 2) 중구에 속한 동 목록 (13개) -->
+    <string-array name="gu_junggu_dong">
+        <item>동인동</item>
+        <item>삼덕동</item>
+        <item>대봉1동</item>
+        <item>대봉2동</item>
+        <item>대신동</item>
+        <item>남산1동</item>
+        <item>남산2동</item>
+        <item>남산3동</item>
+        <item>남산4동</item>
+        <item>반월당동</item>
+        <item>성내1동</item>
+        <item>성내2동</item>
+        <item>삼덕동</item> <!-- 중복 제거하거나 추가 수정 -->
+    </string-array>
+
+    <!-- 3) 동구에 속한 동 목록 예시 (전체 6개) -->
+    <string-array name="gu_donggu_dong">
+        <item>신암1동</item>
+        <item>신암2동</item>
+        <item>신암3동</item>
+        <item>신암4동</item>
+        <item>신암5동</item>
+        <item>신암6동</item>
+    </string-array>
+
+    <!-- 4) 나머지 구(區)도 같은 방식으로 선언하세요 -->
+    <string-array name="gu_seogu_dong">
+        <item>본리동</item>
+        <item>비산1동</item>
+        <item>비산2동</item>
+        <!-- ... -->
+    </string-array>
+
+    <string-array name="gu_namgu_dong">
+        <item>대명1동</item>
+        <item>대명2동</item>
+        <!-- ... -->
+    </string-array>
+
+    <string-array name="gu_bukgu_dong">
+        <item>산격1동</item>
+        <item>산격2동</item>
+        <!-- ... -->
+    </string-array>
+
+    <string-array name="gu_suseonggu_dong">
+        <item>황금1동</item>
+        <item>황금2동</item>
+        <!-- ... -->
+    </string-array>
+
+    <string-array name="gu_dalseogu_dong">
+        <item>장기동</item>
+        <item>본리동</item>
+        <!-- ... -->
+    </string-array>
+
+</resources>
