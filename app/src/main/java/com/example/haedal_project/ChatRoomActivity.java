@@ -81,6 +81,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         loadUserNickname();
         
         // 메시지 어댑터 설정
+
         adapter = new ChatMessageAdapter(this, currentUserId);
         recyclerView.setAdapter(adapter);
 

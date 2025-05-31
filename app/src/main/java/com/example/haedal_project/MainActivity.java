@@ -4,13 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.haedal_project.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -31,9 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient googleSignInClient;
-    private EditText email;
-    private EditText password;
-    private Button emailLoginButton;
     private SignInButton googleLoginButton;
     private boolean isInitialized = false;
 
@@ -107,14 +101,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeUI() {
         try {
-            // 이메일/비밀번호 로그인 UI 바인딩
-            email = findViewById(R.id.email_editText);
-            password = findViewById(R.id.password_editText);
-            emailLoginButton = findViewById(R.id.email_login_button);
             googleLoginButton = findViewById(R.id.google_login_button);
 
-            if (email == null || password == null || emailLoginButton == null || googleLoginButton == null) {
-                throw new IllegalStateException("필수 UI 요소를 찾을 수 없습니다");
+            if (googleLoginButton == null) {
+                throw new IllegalStateException("Google 로그인 버튼을 찾을 수 없습니다");
             }
 
             // 구글 로그인 버튼 설정
@@ -130,47 +120,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
-        // 이메일 로그인 버튼 클릭 리스너
-        emailLoginButton.setOnClickListener(v -> {
-            if (!isInitialized) {
-                Log.e(TAG, "Trying to login before initialization");
-                Toast.makeText(this, "앱이 아직 초기화되지 않았습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            String emailText = email.getText().toString().trim();
-            String passwordText = password.getText().toString().trim();
-
-            if (emailText.isEmpty() || passwordText.isEmpty()) {
-                Toast.makeText(this, "이메일과 비밀번호를 입력해주세요", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Log.d(TAG, "Attempting email login for: " + emailText);
-
-            mAuth.signInWithEmailAndPassword(emailText, passwordText)
-                    .addOnSuccessListener(result -> {
-                        Log.d(TAG, "Email login successful");
-                        checkNicknameAndProceed();
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Email login failed", e);
-                        String errorMessage = "로그인 실패: ";
-                        if (e.getMessage() != null) {
-                            if (e.getMessage().contains("password is invalid")) {
-                                errorMessage += "비밀번호가 올바르지 않습니다.";
-                            } else if (e.getMessage().contains("no user record")) {
-                                errorMessage += "존재하지 않는 계정입니다.";
-                            } else {
-                                errorMessage += e.getMessage();
-                            }
-                        } else {
-                            errorMessage += "알 수 없는 오류가 발생했습니다.";
-                        }
-                        Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                    });
-        });
-
         // 구글 로그인 버튼 클릭 리스너
         googleLoginButton.setOnClickListener(v -> {
             if (!isInitialized) {
@@ -214,23 +163,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
-        try {
-            Log.d(TAG, "Authenticating with Firebase using Google token");
-            AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-            mAuth.signInWithCredential(credential)
-                    .addOnCompleteListener(this, task -> {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "Firebase auth with Google successful");
-                            checkNicknameAndProceed();
-                        } else {
-                            Log.e(TAG, "Firebase auth with Google failed", task.getException());
-                            Toast.makeText(this, "Firebase 인증 실패", Toast.LENGTH_LONG).show();
-                        }
-                    });
-        } catch (Exception e) {
-            Log.e(TAG, "Error in firebaseAuthWithGoogle", e);
-            Toast.makeText(this, "Google 인증 처리 중 오류가 발생했습니다.", Toast.LENGTH_LONG).show();
-        }
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "signInWithCredential:success");
+                        checkNicknameAndProceed();
+                    } else {
+                        Log.w(TAG, "signInWithCredential:failure", task.getException());
+                        Toast.makeText(MainActivity.this, "인증 실패",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void checkNicknameAndProceed() {

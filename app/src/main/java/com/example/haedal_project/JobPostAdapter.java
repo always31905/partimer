@@ -6,10 +6,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JobPostAdapter extends RecyclerView.Adapter<JobPostAdapter.VH> {
-    private List<JobPost> list;
+    private List<JobPost> list = new ArrayList<>();
     private OnItemClickListener listener;
 
     /**
@@ -30,7 +31,10 @@ public class JobPostAdapter extends RecyclerView.Adapter<JobPostAdapter.VH> {
      * 데이터 리스트를 설정하고 RecyclerView를 갱신합니다.
      */
     public void setItems(List<JobPost> posts) {
-        this.list = posts;
+        this.list.clear();
+        if (posts != null) {
+            this.list.addAll(posts);
+        }
         notifyDataSetChanged();
     }
 
@@ -52,7 +56,7 @@ public class JobPostAdapter extends RecyclerView.Adapter<JobPostAdapter.VH> {
 
     @Override
     public int getItemCount() {
-        return list == null ? 0 : list.size();
+        return list.size();
     }
 
     /**

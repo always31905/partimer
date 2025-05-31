@@ -6,28 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class PostDetailActivity extends AppCompatActivity {
     private static final String TAG = "PostDetailActivity";
@@ -43,6 +30,7 @@ public class PostDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate started");
         setContentView(R.layout.activity_post_detail);
 
         // 툴바 설정
@@ -53,56 +41,67 @@ public class PostDetailActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // 뷰 초기화
-        viewNormal = findViewById(R.id.layoutNormal);
-        viewEdit = findViewById(R.id.layoutEdit);
-        
-        // 일반 보기 모드 뷰
-        tvTitle = findViewById(R.id.tvTitle);
-        tvContent = findViewById(R.id.tvContent);
-        tvLocation = findViewById(R.id.tvLocation);
-        tvDate = findViewById(R.id.tvDate);
-        tvTime = findViewById(R.id.tvTime);
-        tvPay = findViewById(R.id.tvPay);
-        tvKeywords = findViewById(R.id.tvKeywords);
-        btnEdit = findViewById(R.id.btnEdit);
-        btnDelete = findViewById(R.id.btnDelete);
-        btnChat = findViewById(R.id.btnChat);
+        try {
+            // 뷰 초기화
+            Log.d(TAG, "Initializing views");
+            viewNormal = findViewById(R.id.layoutNormal);
+            viewEdit = findViewById(R.id.layoutEdit);
+            
+            // 일반 보기 모드 뷰
+            tvTitle = findViewById(R.id.tvTitle);
+            tvContent = findViewById(R.id.tvContent);
+            tvLocation = findViewById(R.id.tvLocation);
+            tvDate = findViewById(R.id.tvDate);
+            tvTime = findViewById(R.id.tvTime);
+            tvPay = findViewById(R.id.tvPay);
+            tvKeywords = findViewById(R.id.tvKeywords);
+            btnEdit = findViewById(R.id.btnEdit);
+            btnDelete = findViewById(R.id.btnDelete);
+            btnChat = findViewById(R.id.btnChat);
 
-        // 수정 모드 뷰
-        etTitle = findViewById(R.id.etTitle);
-        etContent = findViewById(R.id.etContent);
-        spLocation = findViewById(R.id.spLocation);
-        btnDate = findViewById(R.id.btnDate);
-        etStartTime = findViewById(R.id.etStartTime);
-        etEndTime = findViewById(R.id.etEndTime);
-        etPay = findViewById(R.id.etPay);
-        etKeywords = findViewById(R.id.etKeywords);
-        btnSave = findViewById(R.id.btnSave);
-        btnCancel = findViewById(R.id.btnCancel);
+            // 수정 모드 뷰
+            etTitle = findViewById(R.id.etTitle);
+            etContent = findViewById(R.id.etContent);
+            spLocation = findViewById(R.id.spLocation);
+            btnDate = findViewById(R.id.btnDate);
+            etStartTime = findViewById(R.id.etStartTime);
+            etEndTime = findViewById(R.id.etEndTime);
+            etPay = findViewById(R.id.etPay);
+            etKeywords = findViewById(R.id.etKeywords);
+            btnSave = findViewById(R.id.btnSave);
+            btnCancel = findViewById(R.id.btnCancel);
 
-        // 스피너 설정 - arrays.xml의 daegu_gu 배열 사용
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.daegu_gu, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spLocation.setAdapter(adapter);
+            Log.d(TAG, "Setting up spinner");
+            // 스피너 설정 - arrays.xml의 daegu_gu 배열 사용
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                    R.array.daegu_gu, android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spLocation.setAdapter(adapter);
 
-        // 버튼 클릭 리스너 설정
-        btnEdit.setOnClickListener(v -> toggleEditMode(true));
-        btnDelete.setOnClickListener(v -> showDeleteConfirmDialog());
-        btnSave.setOnClickListener(v -> saveChanges());
-        btnCancel.setOnClickListener(v -> toggleEditMode(false));
-        btnDate.setOnClickListener(v -> showDatePicker());
-        btnChat.setOnClickListener(v -> startChat());
+            // 버튼 클릭 리스너 설정
+            btnEdit.setOnClickListener(v -> toggleEditMode(true));
+            btnDelete.setOnClickListener(v -> showDeleteConfirmDialog());
+            btnSave.setOnClickListener(v -> saveChanges());
+            btnCancel.setOnClickListener(v -> toggleEditMode(false));
+            btnDate.setOnClickListener(v -> showDatePicker());
+            btnChat.setOnClickListener(v -> startChat());
 
-        // 게시글 정보 가져오기
-        postId = getIntent().getStringExtra("postId");
-        if (postId == null) {
-            Toast.makeText(this, "게시글을 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+            // 게시글 정보 가져오기
+            postId = getIntent().getStringExtra("postId");
+            Log.d(TAG, "Received postId: " + postId);
+            
+            if (postId == null) {
+                Log.e(TAG, "postId is null");
+                Toast.makeText(this, "게시글을 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
+            loadPost();
+        } catch (Exception e) {
+            Log.e(TAG, "Error in onCreate", e);
+            Toast.makeText(this, "오류가 발생했습니다: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             finish();
-            return;
         }
-        loadPost();
     }
 
     @Override
@@ -112,16 +111,20 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     private void loadPost() {
+        Log.d(TAG, "Loading post with ID: " + postId);
         FirebaseFirestore.getInstance()
                 .collection("job_posts")
                 .document(postId)
                 .get()
                 .addOnSuccessListener(doc -> {
+                    Log.d(TAG, "Successfully retrieved document");
                     currentPost = doc.toObject(JobPost.class);
                     if (currentPost != null) {
                         currentPost.setId(doc.getId());  // ID 명시적 설정
+                        Log.d(TAG, "Successfully converted to JobPost object");
                         showPostDetails();
                     } else {
+                        Log.e(TAG, "Failed to convert document to JobPost object");
                         Toast.makeText(this, "게시글을 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
                         finish();
                     }

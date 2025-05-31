@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingStart="8dp"
-    android:paddingEnd="16dp"
+    android:paddingEnd="60dp"
     android:paddingTop="4dp"
     android:paddingBottom="4dp">
 
@@ -14,7 +14,9 @@
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:textColor="@android:color/darker_gray"
+        android:textColor="#757575"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="2dp"
         app:layout_constraintStart_toStartOf="@id/text_message"
         app:layout_constraintBottom_toTopOf="@id/text_message" />
 
@@ -27,6 +29,7 @@
         android:padding="12dp"
         android:textColor="@android:color/black"
         android:textSize="16sp"
+        android:lineSpacingExtra="2dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:textSize="12sp"
-        android:textColor="@android:color/darker_gray"
+        android:textColor="#9E9E9E"
         app:layout_constraintStart_toEndOf="@id/text_message"
         app:layout_constraintBottom_toBottomOf="@id/text_message" />
 
