@@ -3,6 +3,7 @@ package com.example.haedal_project;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -25,10 +26,10 @@ public class HomeActivity extends AppCompatActivity {
         changeFragment(new HomeFragment());
 
         // 하단 버튼 바
-        Button btnHome    = findViewById(R.id.btn_home);
-        Button btnSearch  = findViewById(R.id.btn_search);
-        Button btnChat    = findViewById(R.id.btn_chat);
-        Button btnAccount = findViewById(R.id.btn_account);
+        ImageButton btnHome    = findViewById(R.id.btn_home);
+        ImageButton btnSearch  = findViewById(R.id.btn_search);
+        ImageButton btnChat    = findViewById(R.id.btn_chat);
+        ImageButton btnAccount = findViewById(R.id.btn_account);
 
         btnHome.setOnClickListener(v ->
                 changeFragment(new HomeFragment())

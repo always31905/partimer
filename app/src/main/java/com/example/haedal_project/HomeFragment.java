@@ -22,6 +22,9 @@ import java.util.List;
 public class HomeFragment extends Fragment {
     private JobPostAdapter adapter;
 
+
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
