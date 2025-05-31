@@ -31,7 +31,7 @@
         android:id="@+id/etNickname"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="닉네임을 입력하세요"
+        
         android:inputType="text"
 
         android:layout_marginBottom="20dp"

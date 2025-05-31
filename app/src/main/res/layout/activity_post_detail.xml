@@ -112,6 +112,14 @@
                         android:backgroundTint="#FF5252"
                         android:text="삭제" />
                 </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnChat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="채팅하기"
+                    android:backgroundTint="#4CAF50" />
             </LinearLayout>
 
             <!-- 수정 모드 -->

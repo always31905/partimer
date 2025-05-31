@@ -113,45 +113,67 @@ public class SearchFragment extends Fragment {
     // 검색 조건으로 Firestore에서 글 목록 불러오기
     private void searchPosts(String gu, String date, Integer minPay, List<String> keywords) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Query query = db.collection("job_posts")
-                .orderBy("location")
-                .orderBy("date")
-                .orderBy("pay")
-                .orderBy("createdAt", Query.Direction.DESCENDING);
+        Query query = db.collection("job_posts");
 
-        if (gu != null)
-            query = query.whereEqualTo("location", gu);
-        if (date != null)
+        // 복합 쿼리를 위한 인덱스 생성이 필요한 경우를 최소화하기 위해
+        // 가장 많이 사용되는 필터를 먼저 적용
+        
+        // 1) 날짜 필터 (가장 많이 사용될 것으로 예상)
+        if (date != null) {
             query = query.whereEqualTo("date", date);
-        if (minPay != null)
+        }
+
+        // 2) 구 필터
+        if (gu != null) {
+            query = query.whereEqualTo("location", gu);
+        }
+
+        // 3) 시급 범위 필터
+        if (minPay != null) {
             query = query.whereGreaterThanOrEqualTo("pay", minPay);
+        }
 
-        query.get().addOnSuccessListener(snapshot -> {
-            List<JobPost> result = new ArrayList<>();
-            for (DocumentSnapshot doc : snapshot.getDocuments()) {
-                JobPost post = doc.toObject(JobPost.class);
-                if (post != null) {
-                    post.setId(doc.getId());
+        // 4) 최신순 정렬 (항상 적용)
+        query = query.orderBy("createdAt", Query.Direction.DESCENDING);
 
-                    boolean match = true;
-                    if (keywords != null && !keywords.isEmpty()) {
-                        match = false;
-                        for (String input : keywords) {
-                            if (post.getKeywords() != null &&
-                                    post.getKeywords().contains(input)) {
-                                match = true;
-                                break;
+        // 쿼리 실행
+        query.get()
+                .addOnSuccessListener(snapshot -> {
+                    List<JobPost> result = new ArrayList<>();
+                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                        JobPost post = doc.toObject(JobPost.class);
+                        if (post != null) {
+                            post.setId(doc.getId());
+
+                            // 키워드 매칭 (클라이언트 사이드에서 필터링)
+                            boolean match = true;
+                            if (keywords != null && !keywords.isEmpty()) {
+                                match = false;
+                                for (String input : keywords) {
+                                    if (post.getKeywords() != null &&
+                                            post.getKeywords().contains(input)) {
+                                        match = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (match) {
+                                result.add(post);
                             }
                         }
                     }
-
-                    if (match) result.add(post);
-                }
-            }
-
-            adapter.setItems(result);
-        }).addOnFailureListener(e ->
-                Toast.makeText(getContext(), "검색 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-        );
+                    
+                    // 검색 결과 표시
+                    adapter.setItems(result);
+                    
+                    // 검색 결과가 없을 때 토스트 메시지 표시
+                    if (result.isEmpty()) {
+                        Toast.makeText(getContext(), "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(getContext(), "검색 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
     }
 }
