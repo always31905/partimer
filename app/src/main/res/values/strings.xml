@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HAEDAL_PROJECT</string>
+    <string name="app_name">ALT</string>
     <string name="default_web_client_id">258639347441-rm9ijv016i9spjlaecpigqbbrteg50pg.apps.googleusercontent.com</string>
     <string name="gcm_defaultSenderId" translatable="false">258639347441</string>
     <string name="google_api_key" translatable="false">AIzaSyDL5qkMggjVhtlwroBZIDjsCh4w3O7uXJc</string>
