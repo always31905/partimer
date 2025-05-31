@@ -62,11 +62,18 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void updateFabVisibility(Fragment fragment) {
-        // 프래그먼트에 따라 FloatingActionButton 표시/숨김
+        // 프래그먼트에 따라 FloatingActionButton과 하단 바 표시/숨김
+        View bottomBar = findViewById(R.id.bottom_bar);
+
         if (fragment instanceof HomeFragment) {
             fabWrite.setVisibility(View.VISIBLE);
+            bottomBar.setVisibility(View.VISIBLE);
+        } else if (fragment instanceof WriteFragment) {
+            fabWrite.setVisibility(View.GONE);
+            bottomBar.setVisibility(View.GONE);
         } else {
             fabWrite.setVisibility(View.GONE);
+            bottomBar.setVisibility(View.VISIBLE);
         }
     }
 
