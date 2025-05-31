@@ -1,5 +1,5 @@
 # 💼 **알바 대타 구인 앱 프로젝트(ALT)**
-![Image](https://github.com/user-attachments/assets/74561466-34cc-4ed5-8f09-6c2a8dee58a8)
+<img src="https://github.com/user-attachments/assets/74561466-34cc-4ed5-8f09-6c2a8dee58a8" width="350" height="auto"/>
 ## 🧩 1. 프로젝트 개요
 
 - 근무 전 컨디션 불량·갑작스러운 일정 변경 등으로 알바를 가지 못하는 상황 발생
