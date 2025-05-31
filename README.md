@@ -61,7 +61,7 @@
 - 채팅방 정보 표시(상대방 이름, 마지막 메시지, 시간)
 - 읽지 않은 메시지 수 표시
 - Firebase Firestore에서 사용자 닉네임 조회
-1. **ChatMessageAdapter**
+2. **ChatMessageAdapter**
 - 역할: 개별 채팅 메시지의 UI를 관리하는 어댑터
 - 주요 기능:
 - 메시지 타입 구분(보낸 메시지/받은 메시지)
