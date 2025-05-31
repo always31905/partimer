@@ -33,7 +33,9 @@
 - 등록 클릭 시 → Firestore `job_posts`에 문서 저장
 - `JobPost` 객체는 작성자 정보(`writerUid`, `writerName`)와 근무 조건(`date`, `pay`, `location`, `keywords` 등)을 포함
 
-![스크린샷 2025-05-28 220419.png](attachment:6726996f-95be-45bb-8727-4d03bc6d55d5:스크린샷_2025-05-28_220419.png)
+![Image](https://github.com/user-attachments/assets/0c6ea4ee-6861-4ed2-8f92-b7a578516068)
+
+
 
 ### 📄 3) 요청 조회 & 필터
 
@@ -101,32 +103,7 @@
     - 사용자 간 1:1 실시간 채팅 기능 구현
     - 메시지 송수신을 위한 경량 데이터 처리에 사용
     
-   
-    
- HAEKATHON/		
-	├──frontend/ ~
-	└───backend/
-			HAEKATHON/
-			├── build.gradle <- Dependencies 설정
-			├── settings.gradle
-			├── gradle/
-			├── src/
-			│   ├── main/
-			│   │   ├── java/com/seven_eleven/haekathon/
-			│   │   │   └── config
-			│   │   │   └── controller
-			│   │   │   └── domain
-			│   │   │   └── dto
-			│   │   │   └── repository
-			│   │   │   └── service
-			│   │   │   └── security
-			│   │   │   └── HaekathonApplication.java <- 서버 부팅 파일
-			│   │   └── resources/
-			│   │       ├── application.properties <- DB 연결 & JPA 설정
-			│   │       └── static/
-			│   │       └── templates/
-
----
+![Image](https://github.com/user-attachments/assets/b45c0df8-8dcb-4205-8f7d-eac47de20931)
 
 ## 🗓️ 7. 향후 계획 & To-Do
 
